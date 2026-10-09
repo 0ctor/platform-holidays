@@ -1,41 +1,44 @@
-# Exemplo de compose no host sp1 (`/home/ubuntu/octor/apps/<app>/`).
-# Dual FE+API: combine com template-frontend (IMAGE_WEB + IMAGE_API).
+# Exemplo local / base para apps/platform-holidays no host.
+# Produção: sp1-sd-octor-1 · Homolog: sp1-sd-octor-2
+
+name: platform-holidays
 
 services:
-  api:
-    image: ${IMAGE:-ghcr.io/0ctor/template-api-rust:latest}
-    container_name: octor-template-api-rust
+  platform-holidays:
+    image: ${IMAGE:-ghcr.io/0ctor/platform-holidays:latest}
+    container_name: octor-platform-holidays
     restart: unless-stopped
-    env_file: [.env]
+    env_file:
+      - .env
     environment:
       TZ: America/Sao_Paulo
-      BIND_ADDRESS: 0.0.0.0:8080
-      OCTOR_SERVICE_NAME: template-api-rust
+    ports:
+      - "127.0.0.1:15216:8080"
     networks:
-      - proxy
       - octor
-    healthcheck:
-      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8080/health/live"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 25s
+      - proxy
     labels:
       - traefik.enable=true
       - traefik.docker.network=proxy
-      - traefik.http.routers.template-api-rust.rule=Host(`foo.octor.com.br`) && PathPrefix(`/v1`) || Host(`foo.octor.com.br`) && PathPrefix(`/health`)
-      - traefik.http.routers.template-api-rust.entrypoints=websecure
-      - traefik.http.routers.template-api-rust.tls.certresolver=letsencrypt
-      - traefik.http.routers.template-api-rust.priority=100
-      - traefik.http.services.template-api-rust.loadbalancer.server.port=8080
+      - traefik.http.services.platform-holidays.loadbalancer.server.port=8080
+      - traefik.http.routers.platform-holidays.rule=Host(`holidays.octor.com.br`)
+      - traefik.http.routers.platform-holidays.entrypoints=websecure
+      - traefik.http.routers.platform-holidays.tls.certresolver=letsencrypt
+      - traefik.http.routers.platform-holidays.service=platform-holidays
     logging:
       driver: json-file
       options:
-        max-size: "10m"
+        max-size: "20m"
         max-file: "3"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8080/health/live >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
 
 networks:
-  proxy:
-    external: true
   octor:
+    external: true
+  proxy:
     external: true

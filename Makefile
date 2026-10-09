@@ -1,4 +1,4 @@
-# Makefile — template-api-rust (API Octor)
+# Makefile — platform-holidays (API Octor)
 # Desenvolvimento local: Cargo + Vault OPS
 # Docs: https://backstage.octor.com.br/secrets-vault.html
 #
