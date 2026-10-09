@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "Pedido em template-api-rust",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1080,
+      480
+    ],
+    "column_fit": "spread",
+    "views": [
+      {
+        "id": "pedido",
+        "label": "Pedido",
+        "focus": [
+          "cliente",
+          "api",
+          "auth",
+          "banco"
+        ],
+        "note": "Ordem vista nos módulos de entrada, auth e persistência."
+      }
+    ]
+  },
+  "participants": [
+    {
+      "id": "cliente",
+      "type": "external",
+      "label": "Cliente",
+      "sublabel": "HTTP"
+    },
+    {
+      "id": "api",
+      "type": "backend",
+      "label": "API",
+      "sublabel": "template-api-rust"
+    },
+    {
+      "id": "auth",
+      "type": "security",
+      "label": "Auth",
+      "sublabel": "introspecção web-auth"
+    },
+    {
+      "id": "banco",
+      "type": "database",
+      "label": "MySQL",
+      "sublabel": "persistência"
+    }
+  ],
+  "messages": [
+    {
+      "id": "cliente-api-chama-health-live-178",
+      "from": "cliente",
+      "to": "api",
+      "y": 178,
+      "label": "chama /health/live",
+      "variant": "emphasis"
+    },
+    {
+      "id": "api-auth-valida-sessao-206",
+      "from": "api",
+      "to": "auth",
+      "y": 206,
+      "label": "valida sessão",
+      "variant": "security"
+    },
+    {
+      "id": "auth-api-identidade-234",
+      "from": "auth",
+      "to": "api",
+      "y": 234,
+      "label": "identidade",
+      "variant": "return"
+    },
+    {
+      "id": "api-banco-consulta-262",
+      "from": "api",
+      "to": "banco",
+      "y": 262,
+      "label": "consulta",
+      "variant": "emphasis"
+    },
+    {
+      "id": "banco-api-linhas-290",
+      "from": "banco",
+      "to": "api",
+      "y": 290,
+      "label": "linhas",
+      "variant": "return"
+    },
+    {
+      "id": "api-cliente-resposta-318",
+      "from": "api",
+      "to": "cliente",
+      "y": 318,
+      "label": "resposta",
+      "variant": "return"
+    }
+  ]
+}

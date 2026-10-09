@@ -1,0 +1,32 @@
+# Bloqueia PR feature/chore → main.
+# Fluxo: feature/* → PR → dev → PR → main.
+
+name: Git Flow Guard
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+    branches: [main]
+
+jobs:
+  guard:
+    name: Only dev/hotfix → main
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enforce feature → dev → main
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          set -euo pipefail
+          echo "PR ${BASE_REF} ← ${HEAD_REF}"
+          if [[ "$HEAD_REF" == "dev" ]]; then
+            echo "OK: promote dev → main"
+            exit 0
+          fi
+          if [[ "$HEAD_REF" == hotfix/* || "$HEAD_REF" == fix/* ]]; then
+            echo "OK: hotfix → main"
+            exit 0
+          fi
+          echo "::error title=Git flow inválido::PR para main só de 'dev' ou 'hotfix/*'/'fix/*'."
+          exit 1

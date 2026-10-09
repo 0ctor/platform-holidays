@@ -1,0 +1,186 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "template-api-rust",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1080,
+      520
+    ],
+    "views": [
+      {
+        "id": "caminho",
+        "label": "Caminho principal",
+        "focus": [
+          "cliente",
+          "api",
+          "banco"
+        ],
+        "note": "Módulos ligados pelo código deste repositório."
+      },
+      {
+        "id": "apoio",
+        "label": "Auth, fila e logs",
+        "focus": [
+          "api",
+          "auth",
+          "loki"
+        ],
+        "note": "Ligações laterais encontradas no código, fora do caminho de leitura."
+      }
+    ],
+    "repository": {
+      "url": "https://github.com/0ctor/template-api-rust",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "ab5ea05a83b35d55ce2ed7390ea76f061413e172"
+    }
+  },
+  "components": [
+    {
+      "id": "cliente",
+      "type": "external",
+      "label": "Cliente HTTP",
+      "sublabel": "chamada de API",
+      "pos": [
+        40,
+        150
+      ],
+      "size": [
+        176,
+        72
+      ]
+    },
+    {
+      "id": "api",
+      "type": "backend",
+      "label": "template-api-rust",
+      "sublabel": "error_report, health, ",
+      "pos": [
+        276,
+        150
+      ],
+      "size": [
+        188,
+        84
+      ],
+      "sources": [
+        {
+          "path": "src/main.rs",
+          "line": 2,
+          "label": "main"
+        }
+      ]
+    },
+    {
+      "id": "banco",
+      "type": "database",
+      "label": "MySQL",
+      "sublabel": "persistência",
+      "pos": [
+        512,
+        150
+      ],
+      "size": [
+        176,
+        72
+      ],
+      "sources": [
+        {
+          "path": "src/main.rs",
+          "line": 21,
+          "label": "MySQL"
+        }
+      ]
+    },
+    {
+      "id": "auth",
+      "type": "security",
+      "label": "Auth",
+      "sublabel": "introspecção web-auth",
+      "pos": [
+        158.0,
+        320
+      ],
+      "size": [
+        176,
+        68
+      ],
+      "sources": [
+        {
+          "path": "src/auth.rs",
+          "line": 49,
+          "label": "auth"
+        }
+      ]
+    },
+    {
+      "id": "loki",
+      "type": "external",
+      "label": "Loki",
+      "sublabel": "erros e logs",
+      "pos": [
+        394.0,
+        320
+      ],
+      "size": [
+        176,
+        68
+      ],
+      "sources": [
+        {
+          "path": "src/main.rs",
+          "line": 41,
+          "label": "Loki"
+        }
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "cliente-api-https",
+      "from": "cliente",
+      "to": "api",
+      "label": "HTTPS",
+      "variant": "emphasis"
+    },
+    {
+      "id": "api-banco-sql",
+      "from": "api",
+      "to": "banco",
+      "label": "SQL",
+      "variant": "default"
+    },
+    {
+      "id": "api-auth-introspect",
+      "from": "api",
+      "to": "auth",
+      "label": "introspect",
+      "variant": "security",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelDy": 28
+    },
+    {
+      "id": "api-loki-push",
+      "from": "api",
+      "to": "loki",
+      "label": "push",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelDy": 28
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Handlers",
+      "items": [
+        "error_report",
+        "health"
+      ]
+    }
+  ]
+}
