@@ -1,11 +1,9 @@
-use anyhow::{bail, Context, Result};
+use anyhow::{Context, Result};
 use std::{env, time::Duration};
 
 #[derive(Clone, Debug)]
 pub struct Config {
     pub bind_address: String,
-    pub database_url: String,
-    pub database_max_connections: u32,
     pub auth_introspect_url: String,
     pub auth_timeout: Duration,
     pub allowed_cors_origins: Vec<String>,
@@ -26,15 +24,13 @@ impl Config {
     pub fn from_env() -> Result<Self> {
         let _ = dotenvy::dotenv();
 
-        let database_url = env::var("DATABASE_URL").context("DATABASE_URL é obrigatório")?;
-        if !database_url.starts_with("mysql://") {
-            bail!("DATABASE_URL deve usar MySQL (mysql://…)");
-        }
-
         let auth_introspect_url = env::var("AUTH_INTROSPECT_URL")
             .unwrap_or_else(|_| "https://auth.octor.com.br/v1/auth/introspect".into());
         let allowed_cors_origins = env::var("ALLOWED_CORS_ORIGINS")
-            .unwrap_or_else(|_| "http://localhost:3000".into())
+            .unwrap_or_else(|_| {
+                "http://localhost:3000,http://localhost:5173,https://agenda.octor.com.br,https://app.octor.com.br"
+                    .into()
+            })
             .split(',')
             .map(str::trim)
             .filter(|value| !value.is_empty())
@@ -43,8 +39,6 @@ impl Config {
 
         Ok(Self {
             bind_address: env::var("BIND_ADDRESS").unwrap_or_else(|_| "0.0.0.0:8080".into()),
-            database_url,
-            database_max_connections: parse_env("DATABASE_MAX_CONNECTIONS", 10)?,
             auth_introspect_url,
             auth_timeout: Duration::from_millis(parse_env("AUTH_TIMEOUT_MS", 2_000)?),
             allowed_cors_origins,
@@ -52,7 +46,7 @@ impl Config {
                 .or_else(|_| env::var("ENVIRONMENT"))
                 .unwrap_or_else(|_| "production".into()),
             service_name: env::var("OCTOR_SERVICE_NAME")
-                .unwrap_or_else(|_| "template-api-rust".into()),
+                .unwrap_or_else(|_| "platform-holidays".into()),
             loki: LokiConfig::from_env()?,
         })
     }
@@ -71,7 +65,7 @@ impl LokiConfig {
             password: env::var("LOKI_PUSH_PASSWORD").context(
                 "LOKI_PUSH_PASSWORD é obrigatório quando LOKI_PUSH_URL estiver definido",
             )?,
-            job: env::var("LOKI_JOB").unwrap_or_else(|_| "template-api-rust".into()),
+            job: env::var("LOKI_JOB").unwrap_or_else(|_| "platform-holidays".into()),
         }))
     }
 }

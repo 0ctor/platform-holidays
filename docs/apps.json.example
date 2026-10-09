@@ -1,12 +1,12 @@
 {
   "repos": {
-    "0ctor/platform-foo": {
+    "0ctor/platform-holidays": {
       "branch": "main",
-      "app": "platform-foo",
+      "app": "platform-holidays",
       "kind": "single",
       "script": "/home/ubuntu/octor/scripts/deploy/app.sh",
       "images": {
-        "web": "ghcr.io/0ctor/platform-foo"
+        "web": "ghcr.io/0ctor/platform-holidays"
       },
       "build": {
         "enabled": true,
@@ -14,9 +14,9 @@
         "context": "."
       },
       "health": {
-        "container": "octor-platform-foo",
-        "url": "http://127.0.0.1:8080/health/ready",
-        "public": "https://foo.octor.com.br/health/ready"
+        "container": "octor-platform-holidays",
+        "url": "http://127.0.0.1:15216/health/ready",
+        "public": "https://holidays.octor.com.br/health/ready"
       }
     }
   }
