@@ -8,10 +8,13 @@ Substitui a dependência de runtime em [rodriguesfas.github.io/holidays](https:/
 |------|--------|
 | Repo | [`0ctor/platform-holidays`](https://github.com/0ctor/platform-holidays) |
 | Template | [`0ctor/template-api-rust`](https://github.com/0ctor/template-api-rust) |
-| Host PRD | `https://holidays.octor.com.br` |
+| Host público (Traefik/Statuspage) | `https://holidays.octor.com.br` |
+| Consumo interno (rede Docker `octor`) | `http://octor-platform-holidays:8080` |
 | Porta local | `4545` |
 | Porta VPN (host) | `15216` |
 | Auth nas leituras | **não** (dados públicos de calendário; sem PHI) |
+
+Apps no bare metal **não** chamam o domínio público: usam `HOLIDAYS_API_BASE_URL=http://octor-platform-holidays:8080` (default no código e no compose).
 
 ## Rotas
 
@@ -43,8 +46,8 @@ Com Vault OPS: `make run`.
 
 ## Consumidores
 
-- **platform-legacy** — `Holidaysapi` → `HOLIDAYS_API_BASE_URL` (padrão `https://holidays.octor.com.br`)
-- **web-agenda** — overlay de datas comemorativas / futuros clientes `/v2`
+- **platform-legacy** — `Holidaysapi` → `HOLIDAYS_API_BASE_URL` (padrão interno `http://octor-platform-holidays:8080`)
+- **web-agenda** — `GET /v2/holidays` proxy → mesma URL interna
 
 ## Deploy
 
