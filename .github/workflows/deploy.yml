@@ -79,15 +79,21 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - uses: actions/checkout@v5
+
       - name: Pull + compose up
         env:
           IMAGE: ghcr.io/0ctor/platform-holidays:${{ github.sha }}
           APP_DIR: /home/ubuntu/octor/apps/platform-holidays
         run: |
           set -euo pipefail
+          mkdir -p "$APP_DIR"
           if [[ ! -f "$APP_DIR/docker-compose.yml" ]]; then
-            echo "ERRO: docker-compose.yml ausente em $APP_DIR" >&2
-            exit 1
+            cp docker-compose.example.yml "$APP_DIR/docker-compose.yml"
+            echo "BOOTSTRAP: docker-compose.yml a partir do repo"
+          fi
+          if [[ ! -f "$APP_DIR/.env.example" && -f .env.example ]]; then
+            cp .env.example "$APP_DIR/.env.example"
           fi
           cd "$APP_DIR"
           if [[ ! -f .env ]]; then
